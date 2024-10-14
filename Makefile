@@ -6,7 +6,7 @@
 #    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/10/14 18:00:21 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/10/14 18:08:29 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,9 @@ RED         = \033[1;31m
 # Project settings
 CC = 			cc
 CFLAGS = -Wall -Wextra -Werror
-VERSION ?= v3  # Default version if not specified
+DEBUG_FLAGS = -g -O0 -Wall -Wextra -Werror -fsanitize=address -fno-strict-aliasing
+ # Default version if not specified
+VERSION ?= v3
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
 NAME_SERVER = server_$(VERSION)
@@ -87,12 +89,14 @@ norm:
 	norminette $(SRCS_SERVER) $(SRCS_CLIENT)
 	@echo "$(GREEN)Norminette check complete!$(RESET_COLOR)"
 
+
 # Debug target
 debug: clean
 	@echo "$(RED)Compiling in debug mode...$(RESET_COLOR)"
-	$(CC) $(CFLAGS) -g $(SRCS_SERVER) -o $(NAME_SERVER)_debug
-	$(CC) $(CFLAGS) -g $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug
+	$(CC) $(DEBUG_FLAGS) $(SRCS_SERVER) -o $(NAME_SERVER)_debug
+	$(CC) $(DEBUG_FLAGS) $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug
 	@echo "$(GREEN)Debug build complete!$(RESET_COLOR)"
+
 
 # Version targets for different builds
 v1: 

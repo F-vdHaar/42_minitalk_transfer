@@ -6,7 +6,7 @@
 #    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/10/14 18:11:29 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/10/14 18:45:17 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,22 +19,22 @@ RED         = \033[1;31m
 
 # Project settings
 CC = 			cc
-CFLAGS = -Wall -Wextra -Werror
-DEBUG_FLAGS = -ggdb -O0 -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
+CFLAGS = -Wall -Wextra -Werror -Wunused
+DEBUG_FLAGS = -g -O0 -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
  # Default version if not specified
 VERSION ?= v3
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
-NAME_SERVER = server_$(VERSION)
-NAME_CLIENT = client_$(VERSION)
+NAME_SERVER = server
+NAME_CLIENT = client
 
 # Source files
-SRCS_SERVER = $(SRC_DIR)/server.c $(SRC_DIR)/utils.c
-SRCS_CLIENT = $(SRC_DIR)/client.c $(SRC_DIR)/utils.c
+SRCS_SERVER = $(SRC_DIR)/$(VERSION)_server.c $(SRC_DIR)/$(VERSION)_utils.c
+SRCS_CLIENT = $(SRC_DIR)/$(VERSION)_client.c $(SRC_DIR)/$(VERSION)_utils.c
 
 # Object files
-OBJS_SERVER = $(OBJ_DIR)/server.o $(OBJ_DIR)/utils.o
-OBJS_CLIENT = $(OBJ_DIR)/client.o $(OBJ_DIR)/utils.o
+OBJS_SERVER = $(OBJ_DIR)/$(VERSION)_server.o $(OBJ_DIR)/$(VERSION)_utils.o
+OBJS_CLIENT = $(OBJ_DIR)/$(VERSION)_client.o $(OBJ_DIR)/$(VERSION)_utils.o
 
 # Ensure object directory exists
 $(OBJ_DIR):
@@ -56,17 +56,9 @@ $(NAME_CLIENT): $(OBJ_DIR) $(OBJS_CLIENT)
 	@echo "$(GREEN)$(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
 
 # Rule to compile .o files from .c files
-$(OBJ_DIR)/server.o: $(SRC_DIR)/server.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/server.c -o $@
-
-$(OBJ_DIR)/client.o: $(SRC_DIR)/client.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/client.c -o $@
-
-$(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/utils.c -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean object files
 clean:

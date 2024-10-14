@@ -3,95 +3,105 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fvon-der <fvon-der@student.42heilbronn.    +#+  +:+       +#+         #
+#    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/08/02 22:57:14 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/10/14 17:58:25 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SERVER = server
-CLIENT = client
-SRC_DIR = src/minitalk
+# Colors for output
+RESET_COLOR = \033[0;39m
+YELLOW      = \033[0;93m
+BLUE        = \033[0;94m
+GREEN       = \033[0;92m
+RED         = \033[1;31m
 
-# Compiler and flags
-CC = cc
-MAKE = make
-RM = rm -f
+# Project settings
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
+VERSION ?= v1  # Default version if not specified
+SRC_DIR = src/$(VERSION)
+OBJ_DIR = obj/$(VERSION)
+NAME_SERVER = server_$(VERSION)
+NAME_CLIENT = client_$(VERSION)
 
-# Directories
-LIBFT_DIR = lib/libft
-FT_PRINTF_DIR = lib/ft_printf
-INCLUDE_DIR = include
-OBJ_DIR = obj
+# Source files
+SRCS_SERVER = $(SRC_DIR)/server.c $(SRC_DIR)/utils.c
+SRCS_CLIENT = $(SRC_DIR)/client.c $(SRC_DIR)/utils.c
 
-# Include paths for libraries and headers
-INC = -I $(INCLUDE_DIR) -I $(LIBFT_DIR)/include -I $(FT_PRINTF_DIR)/include
-LIBRARIES = -L $(LIBFT_DIR) -lft -L $(FT_PRINTF_DIR) -lftprintf
+# Object files
+OBJS_SERVER = $(OBJ_DIR)/server.o $(OBJ_DIR)/utils.o
+OBJS_CLIENT = $(OBJ_DIR)/client.o $(OBJ_DIR)/utils.o
 
-# Targets
-all: $(SERVER) $(CLIENT)
-
-# Source and Object files
-SERVER_SRC = $(wildcard $(SRC_DIR)/server*.c) $(wildcard $(SRC_DIR)/util*.c)
-CLIENT_SRC = $(wildcard $(SRC_DIR)/client*.c) $(wildcard $(SRC_DIR)/util*.c)
-SERVER_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SERVER_SRC))
-CLIENT_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CLIENT_SRC))
-
-# Ensure libft.a is built before libftprintf.a
-$(LIBFT_DIR)/libft.a:
-	@echo "Building libft..."
-	@$(MAKE) -C $(LIBFT_DIR)
-
-$(FT_PRINTF_DIR)/libftprintf.a: $(LIBFT_DIR)/libft.a
-	@echo "Building libftprintf..."
-	@$(MAKE) -C $(FT_PRINTF_DIR)
-
-$(SERVER): $(SERVER_OBJ) $(FT_PRINTF_DIR)/libftprintf.a
-	@echo "SERVER_OBJ: $(SERVER_OBJ)"
-	@echo "Linking $(SERVER) with libraries"
-	@$(CC) $(CFLAGS) $(SERVER_OBJ) -o $(SERVER) $(INC) $(LIBFT_DIR)/libft.a $(FT_PRINTF_DIR)/libftprintf.a $(LIBRARIES)
-	@echo "$(SERVER) built successfully."
-
-$(CLIENT): $(CLIENT_OBJ) $(FT_PRINTF_DIR)/libftprintf.a
-	@echo "CLIENT_OBJ: $(CLIENT_OBJ)"
-	@echo "Linking $(CLIENT) with libraries"
-	@$(CC) $(CFLAGS) $(CLIENT_OBJ) -o $(CLIENT) $(INC) $(LIBFT_DIR)/libft.a $(FT_PRINTF_DIR)/libftprintf.a $(LIBRARIES)
-	@echo "$(CLIENT) built successfully."
-
-# Build object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	@echo "Compiling $< to $@"
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c $< -o $@ $(INC)
-
-# Ensure object directories exist
+# Ensure object directory exists
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
+# Default rule to build server and client
+all: $(NAME_SERVER) $(NAME_CLIENT)
+
+# Server build rule
+$(NAME_SERVER): $(OBJ_DIR) $(OBJS_SERVER)
+	@echo "$(YELLOW)Compiling $(NAME_SERVER)...$(RESET_COLOR)"
+	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER)
+	@echo "$(GREEN)$(NAME_SERVER) compilation successful!$(RESET_COLOR)"
+
+# Client build rule
+$(NAME_CLIENT): $(OBJ_DIR) $(OBJS_CLIENT)
+	@echo "$(YELLOW)Compiling $(NAME_CLIENT)...$(RESET_COLOR)"
+	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT)
+	@echo "$(GREEN)$(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
+
+# Rule to compile .o files from .c files
+$(OBJ_DIR)/server.o: $(SRC_DIR)/server.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/server.c -o $@
+
+$(OBJ_DIR)/client.o: $(SRC_DIR)/client.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/client.c -o $@
+
+$(OBJ_DIR)/utils.o: $(SRC_DIR)/utils.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/utils.c -o $@
+
 # Clean object files
 clean:
-	@echo "Cleaning object files..."
-	$(RM) $(OBJ_DIR)/*.o
-	@$(MAKE) -C $(LIBFT_DIR) clean
-	@$(MAKE) -C $(FT_PRINTF_DIR) clean
-	@echo "Object files cleaned."
+	@echo "$(BLUE)Cleaning object files in $(OBJ_DIR)...$(RESET_COLOR)"
+	rm -rf $(OBJ_DIR)
+	@echo "$(GREEN)Object files cleaned!$(RESET_COLOR)"
 
-# Clean all files
+# Clean everything
 fclean: clean
-	@echo "Cleaning executables and libraries..."
-	$(RM) $(SERVER) $(CLIENT)
-	@$(MAKE) -C $(LIBFT_DIR) fclean
-	@$(MAKE) -C $(FT_PRINTF_DIR) fclean
-	@echo "All files cleaned."
+	@echo "$(BLUE)Removing executables...$(RESET_COLOR)"
+	rm -f $(NAME_SERVER) $(NAME_CLIENT)
+	@echo "$(GREEN)Executables removed!$(RESET_COLOR)"
 
 # Rebuild everything
 re: fclean all
-	@echo "ALL rebuild.."
+
+# Norminette target
+norm:
+	@echo "$(BLUE)Running Norminette...$(RESET_COLOR)"
+	norminette $(SRCS_SERVER) $(SRCS_CLIENT)
+	@echo "$(GREEN)Norminette check complete!$(RESET_COLOR)"
 
 # Debug target
-debug: CFLAGS += -g
-debug: re
+debug: clean
+	@echo "$(RED)Compiling in debug mode...$(RESET_COLOR)"
+	$(CC) $(CFLAGS) -g $(SRCS_SERVER) -o $(NAME_SERVER)_debug
+	$(CC) $(CFLAGS) -g $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug
+	@echo "$(GREEN)Debug build complete!$(RESET_COLOR)"
 
-.PHONY: all clean fclean re debug
+# Version targets for different builds
+v1: 
+	@$(MAKE) VERSION=v1
+
+v2: 
+	@$(MAKE) VERSION=v2
+
+v3: 
+	@$(MAKE) VERSION=v3
+
+.PHONY: all clean fclean re norm debug v1 v2 v3

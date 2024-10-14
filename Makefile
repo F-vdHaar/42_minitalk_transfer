@@ -6,7 +6,7 @@
 #    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/10/14 18:08:29 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/10/14 18:11:29 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ RED         = \033[1;31m
 # Project settings
 CC = 			cc
 CFLAGS = -Wall -Wextra -Werror
-DEBUG_FLAGS = -g -O0 -Wall -Wextra -Werror -fsanitize=address -fno-strict-aliasing
+DEBUG_FLAGS = -ggdb -O0 -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
  # Default version if not specified
 VERSION ?= v3
 SRC_DIR = src/$(VERSION)

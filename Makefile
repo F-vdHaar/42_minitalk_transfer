@@ -6,7 +6,7 @@
 #    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/10/14 17:58:25 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/10/14 18:00:21 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,9 @@ GREEN       = \033[0;92m
 RED         = \033[1;31m
 
 # Project settings
-CC = gcc
+CC = 			cc
 CFLAGS = -Wall -Wextra -Werror
-VERSION ?= v1  # Default version if not specified
+VERSION ?= v3  # Default version if not specified
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
 NAME_SERVER = server_$(VERSION)

@@ -6,20 +6,21 @@
 #    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/11/02 16:22:38 by fvon-de          ###   ########.fr        #
+#    Updated: 2024/11/02 17:17:58 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Colors for output
-RESET_COLOR = \033[0;39m
-YELLOW      = \033[0;93m
-BLUE        = \033[0;94m
-GREEN       = \033[0;92m
-RED         = \033[1;31m
+RESET_COLOR = \033[0m          # Reset to default color
+YELLOW      = \033[1;33m       # Brighter yellow for compliling messages
+BLUE        = \033[1;34m       # Bright blue for info
+GREEN       = \033[1;32m       # Bright green for success
+RED         = \033[1;31m       # Bright red for errors
+CYAN        = \033[1;36m       # Bright cyan for debug info
 
 # Project settings
-INCL	= -I./include -I./lib/libft/include -I./lib/ft_printf/include
-CC		= cc
+INCL = -I./include -I./lib/libft/include -I./lib/ft_printf/include
+CC = cc
 CFLAGS = -Wall -Wextra -Werror -Wunused $(INCL)
 DEBUG_FLAGS = $(CFLAGS) -g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
 LDFLAGS = -L./lib/libft -lft -L./lib/ft_printf -lftprintf 
@@ -41,7 +42,13 @@ OBJS_CLIENT = $(OBJ_DIR)/$(VERSION)_client.o $(OBJ_DIR)/$(VERSION)_utils.o
 LIBFT_DIR = ./lib/libft
 FT_PRINTF_DIR = ./lib/ft_printf
 LIBFT = $(LIBFT_DIR)/libft.a
-FT_PRINTF = $(FT_PRINTF_DIR)/ft_printf.a
+FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
+
+# Default rule to build server and client
+all: $(LIBFT) $(FT_PRINTF) $(NAME_SERVER) $(NAME_CLIENT)
+	@echo "$(GREEN)MINITALK : Version $(VERSION) selected.$(RESET_COLOR)"
+	@echo "Source files for server: $(SRCS_SERVER)"
+	@echo "Source files for client: $(SRCS_CLIENT)"
 
 # Ensure object directory exists
 $(OBJ_DIR):
@@ -54,49 +61,50 @@ $(LIBFT):
 $(FT_PRINTF): 
 	@$(MAKE) -C $(FT_PRINTF_DIR)
 
-# Default rule to build server and client
-all: $(LIBFT) $(FT_PRINTF) $(NAME_SERVER) $(NAME_CLIENT)
-	@echo "Version $(VERSION) selected."
 
 # Build rules for server and client
-$(NAME_SERVER): $(OBJ_DIR) $(OBJS_SERVER)
-	@echo "$(YELLOW)Compiling $(NAME_SERVER)...$(RESET_COLOR)"
+$(NAME_SERVER): $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
+	@echo "$(YELLOW)MINITALK : Compiling $(NAME_SERVER)...$(RESET_COLOR)"
 	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER) $(LDFLAGS)
-	@echo "$(GREEN)$(NAME_SERVER) compilation successful!$(RESET_COLOR)"
+	@echo "$(GREEN)MINITALK : $(NAME_SERVER) compilation successful!$(RESET_COLOR)"
 
-$(NAME_CLIENT): $(OBJ_DIR) $(OBJS_CLIENT)
-	@echo "$(YELLOW)Compiling $(NAME_CLIENT)...$(RESET_COLOR)"
+$(NAME_CLIENT): $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
+	@echo "$(YELLOW)MINITALK : Compiling $(NAME_CLIENT)...$(RESET_COLOR)"
 	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT) $(LDFLAGS)
-	@echo "$(GREEN)$(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
+	@echo "$(GREEN)MINITALK : $(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
 
 # Rule to compile .o files from .c files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean rules
 clean:
-	@echo "$(BLUE)Cleaning object files in $(OBJ_DIR)...$(RESET_COLOR)"
+	@echo "$(BLUE)MINITALK : Cleaning object files in $(OBJ_DIR)...$(RESET_COLOR)"
 	@rm -rf $(OBJ_DIR)
+	@$(MAKE) -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(FT_PRINTF_DIR) clean
 
 fclean: clean
-	@echo "$(BLUE)Removing executables...$(RESET_COLOR)"
-	rm -f $(NAME_SERVER) $(NAME_CLIENT)
+	@echo "$(BLUE)MINITALK : Removing executables...$(RESET_COLOR)"
+	@rm -f $(NAME_SERVER) $(NAME_CLIENT)
+	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(MAKE) -C $(FT_PRINTF_DIR) fclean
 
 re: fclean all
 
 # Norminette target
 norm:
-	@echo "$(BLUE)Running Norminette...$(RESET_COLOR)"
-	norminette $(SRCS_SERVER) $(SRCS_CLIENT)
-	@echo "$(GREEN)Norminette check complete!$(RESET_COLOR)"
+	@echo "$(BLUE)MINITALK : Running Norminette...$(RESET_COLOR)"
+	norminette $(SRCS_SERVER) $(SRCS_CLIENT) | grep -v "OK!"
+	@echo "$(GREEN)MINITALK : Norminette check complete!$(RESET_COLOR)"
 
 # Debug target
 debug: clean
-	@echo "$(RED)Compiling in debug mode...$(RESET_COLOR)"
+	@echo "$(RED)MINITALK : Compiling in debug mode...$(RESET_COLOR)"
 	$(CC) $(DEBUG_FLAGS) $(SRCS_SERVER) -o $(NAME_SERVER)_debug
 	$(CC) $(DEBUG_FLAGS) $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug
-	@echo "$(GREEN)Debug build complete!$(RESET_COLOR)"
+	@echo "$(GREEN)MINITALK : Debug build complete!$(RESET_COLOR)"
 
 # Version targets for different builds
 v1: 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
+#    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/10/14 18:45:17 by fvon-der         ###   ########.fr        #
+#    Updated: 2024/11/02 16:06:16 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,12 @@ GREEN       = \033[0;92m
 RED         = \033[1;31m
 
 # Project settings
-CC = 			cc
-CFLAGS = -Wall -Wextra -Werror -Wunused
-DEBUG_FLAGS = -g -O0 -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
+INCL	= -I./include -I./lib/libft/include -I./lib/ft_printf/include
+CC		= cc
+CFLAGS = -Wall -Wextra -Werror -Wunused $(INCL)
+DEBUG_FLAGS = $(CFLAGS)-g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
+# Linker flags
+LDFLAGS = -L./lib/libft -lft 
  # Default version if not specified
 VERSION ?= v3
 SRC_DIR = src/$(VERSION)
@@ -42,17 +45,18 @@ $(OBJ_DIR):
 
 # Default rule to build server and client
 all: $(NAME_SERVER) $(NAME_CLIENT)
+	@echo "Version $(VERSION)" selected."
 
 # Server build rule
 $(NAME_SERVER): $(OBJ_DIR) $(OBJS_SERVER)
 	@echo "$(YELLOW)Compiling $(NAME_SERVER)...$(RESET_COLOR)"
-	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER)
+	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER) $(LDFLAGS)
 	@echo "$(GREEN)$(NAME_SERVER) compilation successful!$(RESET_COLOR)"
 
 # Client build rule
 $(NAME_CLIENT): $(OBJ_DIR) $(OBJS_CLIENT)
 	@echo "$(YELLOW)Compiling $(NAME_CLIENT)...$(RESET_COLOR)"
-	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT)
+	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT) $(LDFLAGS)
 	@echo "$(GREEN)$(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
 
 # Rule to compile .o files from .c files
@@ -63,7 +67,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # Clean object files
 clean:
 	@echo "$(BLUE)Cleaning object files in $(OBJ_DIR)...$(RESET_COLOR)"
-	rm -rf $(OBJ_DIR)
+	@rm -rf $(OBJ_DIR)
 	@echo "$(GREEN)Object files cleaned!$(RESET_COLOR)"
 
 # Clean everything
@@ -91,12 +95,15 @@ debug: clean
 
 
 # Version targets for different builds
+# v1 -> simple setup
 v1: 
 	@$(MAKE) VERSION=v1
 
+# v2 -> send message length first
 v2: 
 	@$(MAKE) VERSION=v2
 
+# v3 -> utf8, checks how many bytes a char or symbol has
 v3: 
 	@$(MAKE) VERSION=v3
 

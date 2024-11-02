@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:45:47 by fvon-de           #+#    #+#             */
-/*   Updated: 2024/10/31 15:46:37 by fvon-de          ###   ########.fr       */
+/*   Updated: 2024/11/02 22:11:59 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	send_bit(pid_t pid, int signal)
 		print_exit("ERROR: Could not send signal", 0);
 }
 
-void	print_exit(char *message, int mode)
+void	print_exit(const char *message, int mode)
 {
 	if (mode == 1)
 	{

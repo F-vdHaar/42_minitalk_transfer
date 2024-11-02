@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minitalk.h"
+#include "v3_minitalk.h"
 
 volatile sig_atomic_t	g_ack_received = 0;
 

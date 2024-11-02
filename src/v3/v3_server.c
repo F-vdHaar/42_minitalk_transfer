@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minitalk.h"
+#include "v3_minitalk.h"
 
 static void bit_to_char(int sig, t_message *s)
 {
@@ -106,7 +106,7 @@ void	sig_handler(int signum, siginfo_t *info, void *context)
 
 int	main(void)
 {
-	t_sigaction	sa;
+	struct sigaction	sa;
 
 	ft_printf("PID: %d\n", getpid());
 	sigemptyset(&sa.sa_mask);

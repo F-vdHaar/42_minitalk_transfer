@@ -6,7 +6,7 @@
 #    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/11/02 16:06:16 by fvon-de          ###   ########.fr        #
+#    Updated: 2024/11/02 16:08:38 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CC		= cc
 CFLAGS = -Wall -Wextra -Werror -Wunused $(INCL)
 DEBUG_FLAGS = $(CFLAGS)-g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
 # Linker flags
-LDFLAGS = -L./lib/libft -lft 
+LDFLAGS = -L./lib/libft -lft -L./lib/ft_printf -lftprintf 
  # Default version if not specified
 VERSION ?= v3
 SRC_DIR = src/$(VERSION)

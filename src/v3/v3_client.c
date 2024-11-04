@@ -32,7 +32,7 @@ void	handle_ack(int sig)
 	}
 }
 
-void	send_message(pid_t pid, char *str)
+void	send_message(pid_t pid, const char *str)
 {
 	int	i;
 	int	j;

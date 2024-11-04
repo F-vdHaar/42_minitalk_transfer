@@ -12,7 +12,7 @@
 
 #include "v3_minitalk.h"
 
-static void bit_to_char(int sig, t_message *s)
+static void	bit_to_char(int sig, t_message *s)
 {
 	ft_printf("DEBUG: server bit to char func\n");
 	ft_printf("DEBUG: Initial state - flag: %d, c: %c, bit: %d\n", s->flag, s->c, s->bit);
@@ -25,7 +25,6 @@ static void bit_to_char(int sig, t_message *s)
 	if (sig == SIGUSR2)
 		s->c |= (1 << s->bit);
 	s->bit++;
-
 	ft_printf("DEBUG: Updated state - c: %c, bit: %d\n", s->c, s->bit);
 	if (s->bit == 8)
 	{
@@ -35,14 +34,12 @@ static void bit_to_char(int sig, t_message *s)
 	}
 }
 
-
-static void handle_utf8_character(t_message *s)
+static void	handle_utf8_character(t_message *s)
 {
-	int byte_count;
+	int	byte_count;
 
 	ft_printf("DEBUG: server handle utf8 func\n");
 	ft_printf("DEBUG: Handling character - c: %c, str_index: %d\n", s->c, s->str_index);
-
 	if ((s->c & 0b10000000) == 0)
 		byte_count = 1;
 	else if ((s->c & 0b11100000) == 0b11000000)
@@ -52,8 +49,7 @@ static void handle_utf8_character(t_message *s)
 	else if ((s->c & 0b11111000) == 0b11110000)
 		byte_count = 4;
 	else
-		return;
-
+		return ;
 	if (s->c == '\0')
 	{
 		send_bit(s->pid, SIGUSR2);
@@ -69,10 +65,9 @@ static void handle_utf8_character(t_message *s)
 	}
 }
 
-
 static void	set_and_print_str(int sig, t_message *s)
 {
-	//ft_printf(" DEBUG: server set and print string func\n");
+	//ft_printf("DEBUG: server set and print string func\n");
 	//ft_printf("DEBUG Processing signal: %d, bit position: %d, char: %c\n", sig, s->bit, s->c);
 	bit_to_char(sig, s);
 	send_bit(s->pid, SIGUSR1);
@@ -87,7 +82,6 @@ void	sig_handler(int signum, siginfo_t *info, void *context)
 {
 	static t_message	s = {0, 0, 0, 0, 0, {0}};
 //	ft_printf(" DEBUG: sig handler func\n");
-
 	(void)context;
 	if (s.pid == 0)
 		s.pid = info->si_pid;
@@ -99,7 +93,7 @@ void	sig_handler(int signum, siginfo_t *info, void *context)
 	set_and_print_str(signum, &s);
 	if (s.c == '\0')
 	{
-	//	send_bit(s.pid, SIGUSR2);
+		send_bit(s.pid, SIGUSR2);
 		ft_memset(&s, 0, sizeof(t_message));
 	}
 }

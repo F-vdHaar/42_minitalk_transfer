@@ -6,7 +6,7 @@
 #    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/11/02 17:17:58 by fvon-de          ###   ########.fr        #
+#    Updated: 2024/11/09 14:58:50 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ INCL = -I./include -I./lib/libft/include -I./lib/ft_printf/include
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Wunused $(INCL)
 DEBUG_FLAGS = $(CFLAGS) -g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
-LDFLAGS = -L./lib/libft -lft -L./lib/ft_printf -lftprintf 
+LDFLAGS =  -L./lib/ft_printf -lftprintf -L./lib/libft -lft
 
 # Default version if not specified
 VERSION ?= v3

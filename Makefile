@@ -6,7 +6,7 @@
 #    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2024/11/09 14:58:50 by fvon-de          ###   ########.fr        #
+#    Updated: 2025/02/10 20:30:33 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ DEBUG_FLAGS = $(CFLAGS) -g -O0 -fsanitize=address -fsanitize=undefined -fno-stri
 LDFLAGS =  -L./lib/ft_printf -lftprintf -L./lib/libft -lft
 
 # Default version if not specified
-VERSION ?= v3
+VERSION ?= v2
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
 NAME_SERVER = server
@@ -102,8 +102,8 @@ norm:
 # Debug target
 debug: clean
 	@echo "$(RED)MINITALK : Compiling in debug mode...$(RESET_COLOR)"
-	$(CC) $(DEBUG_FLAGS) $(SRCS_SERVER) -o $(NAME_SERVER)_debug
-	$(CC) $(DEBUG_FLAGS) $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug
+	$(CC) $(DEBUG_FLAGS) $(SRCS_SERVER) -o $(NAME_SERVER)_debug $(LDFLAGS)
+	$(CC) $(DEBUG_FLAGS) $(SRCS_CLIENT) -o $(NAME_CLIENT)_debug $(LDFLAGS)
 	@echo "$(GREEN)MINITALK : Debug build complete!$(RESET_COLOR)"
 
 # Version targets for different builds

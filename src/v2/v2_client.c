@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:06:47 by fvon-de           #+#    #+#             */
-/*   Updated: 2024/11/03 01:09:47 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/12 19:15:33 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,95 +21,132 @@ volatile sig_atomic_t g_ack_received = 0;
 
 int main(int argc, char **argv)
 {
-	struct sigaction	sa;
-	int					server_pid;
-	const char			*message;
+    struct sigaction sa;
+    int server_pid;
+    const char *message;
 
-	if (argc != 3)
-	{
-		ft_printf("Usage: %s <PID>  <Message>\n", argv[0]);
-		print_exit("Error: User Input", EXIT_SUCCESS);
-	}
-	server_pid = atoi(argv[1]);
-	message = argv[2];
-	sa.sa_flags = 0;
-	sa.sa_handler = handle_ack;
-	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
-		{
-			print_exit("sigaction", EXIT_FAILURE);
-		}
-	send_message_length(server_pid, strlen(message));
-	send_message(server_pid, (char *)message);
-	return (0);
+    if (argc != 3)
+    {
+        ft_printf("Usage: %s <PID>  <Message>\n", argv[0]);
+        print_exit("Error: User Input", EXIT_SUCCESS);
+    }
+    if (ft_atoi(argv[1]) <= 0)
+        print_exit("Invalid PID", EXIT_FAILURE);
+    if (ft_strlen(argv[2]) == 0)
+        print_exit("Message cannot be empty", EXIT_FAILURE);
+    server_pid = ft_atoi(argv[1]);
+    message = argv[2];
+    sa.sa_flags = 0;
+    sa.sa_handler = handle_ack;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
+        print_exit("sigaction", EXIT_FAILURE);
+    ft_printf("DEBUG: client\n message: %s\n length: %i\n", message, ft_strlen(message));
+    send_message_length(server_pid, ft_strlen(message));
+    send_message(server_pid, (char *)message);
+    return (0);
 }
 
 
 static void handle_ack(int sig)
 {
-	if (sig == SIGUSR1)
-	{
-		g_ack_received = 1;
-	}
-	if (sig == SIGUSR2)
-	{
-		print_exit("Server recieved message", 1);
-	}
+    if (sig == SIGUSR1)
+    {
+        g_ack_received = 1;
+        //ft_printf("DEBUG: client rec ack SIG1\n");
+        //write(1, "DEBUG: client rec ack SIG1\n", 28);
+    }
+    if (sig == SIGUSR2)
+    {
+        print_exit("Server confirmed receiving the message.\n", 0);
+    }
 }
 
+// Use SIGUSR1 for bit 1
+// Use SIGUSR2 for bit 0
+// Reset the acknowledgment flag before sending the bit
+// Send the signal to the client using the send_bit function
+// Wait until acknowledgment is received from server
+// pause() function is used to make the client wait until it gets a signal
 static void client_send_bit(pid_t pid, int bit)
 {
-	int signal;
-	
-	if (bit == 1)
-		signal = SIGUSR1;
-	else if (bit == 0)
-		signal = SIGUSR2;
-	else
-	{
-		print_exit("Invalid bit value:", 0);
-		return;
-	}
-	g_ack_received = 0;
-	send_bit(pid, signal);
-	while (!g_ack_received)
-		usleep(50);
+    int signal;
+
+    g_ack_received = 0;
+    if (bit == 1)
+        signal = SIGUSR1;
+    else if (bit == 0)
+        signal = SIGUSR2;
+    else
+    {
+        print_exit("Invalid bit value:", 0);
+        return;
+    }
+    send_bit(pid, signal);
+    fflush(stdout);
+    //write(1, "DEBUG: client send bit: ", 25);
+    // fflush(stdout);
+    // char bit_char = bit + '0';
+    // write(1, &bit_char, 1);
+    // fflush(stdout);
+    // write(1, "\n", 2);
+    // fflush(stdout);
+    //write(1, "DEBUG: waiting for ack...\n", 27);
+    fflush(stdout);
+    while (!g_ack_received)
+    {
+        pause();
+        usleep(100);
+    }
 }
 
-
+// - inform the server about the message size before sending the actual content.
+// Iterate through each bit of the message length 
+// Check if the current bit of the length is set to 1
+// starting from the least significant bit.
 static void send_message_length(pid_t pid, size_t len)
 {
-	size_t  bit;
-    
-    bit  = 0;
-	while (bit < (sizeof(size_t) * 8))
-	{
-		int bin = 0;
-		if ((len & ((size_t)1 << bit)) != 0)
-			bin = 1;
-		client_send_bit(pid, bin);
-		bit++;
-	}
+    size_t bit;
+	int	signal;
+
+	bit = 0;
+    write(1, "DEBUG: Send message length: ", 29);
+    write(1, &len, sizeof(size_t));
+    write(1, "\n", 2);
+    fflush(stdout);
+
+    while (bit < (sizeof(size_t) * 8))
+    {
+        signal = 0;
+        if ((len & ((size_t)1 << bit)) != 0)
+            signal = 1;
+        client_send_bit(pid, signal);
+        ft_printf("%d\n", signal);
+        bit++;
+    }
 }
 
+            // Extract each bit, starting from the most significant bit
+          //  bit = (str[i] >> (7 - j)) & 1;  // Right shift and mask the bit
 static void send_message(pid_t pid, char *str)
 {
-	int	i;
+    int i;
+    int j;
+    int bit;
 
-	i = 0;
-	while (str[i])
-	{
-		int j = 0;
-		while (j < 8)
-		{
-			int bit = 0;
-			if ((str[i] & (1 << j)) != 0)
-			{
-				bit = 1;
-			}
-			client_send_bit(pid, bit);
-			j++;
-		}
-		i++;
-	}
+    i = 0;
+	ft_printf("DEBUG: client\n message: %s\n length: %i\n", str, ft_strlen(str));
+    while (str[i])
+    {
+        j = 0;
+        while (j < 8)
+        {
+            bit = (str[i] >> (7 - j)) & 1; 
+            ft_printf("%d\n", bit);
+
+            client_send_bit(pid, bit);
+            j++;
+        }
+        i++;
+    }
 }

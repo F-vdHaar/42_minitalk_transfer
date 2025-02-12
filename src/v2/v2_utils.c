@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:11:24 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/12 18:28:28 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/12 19:45:52 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	send_bit(pid_t pid, int signal)
 {
-	//ft_printf("DEBUG: Sending signal  %d to PID: %d\n", signal,  pid);
 	if (signal != SIGUSR1 && signal != SIGUSR2)
 	{
 		ft_printf("Invalid signal: %d\n", signal);
@@ -30,7 +29,7 @@ void	send_bit(pid_t pid, int signal)
 void	print_exit(const char *message, int mode)
 {
 	if (!message)
-    	return ;
+		return ;
 	if (mode == 0)
 	{
 		ft_printf("%s\n", message);
@@ -52,20 +51,20 @@ void	handle_errors(int error_flag)
 }
 
 // Function to print a byte in binary using a while loop
-void print_binary(unsigned char byte)
+void	print_binary(unsigned char byte)
 {
-    char bit;
-    int i = 7;
+	char	bit;
+	int		i;
 
-    while (i >= 0)
-    {
-        if ((byte >> i) & 1)
-            bit = '1';
-        else
-            bit = '0';        
-        write(1, &bit, 1);
-        i--;
-    }
+	i = 7;
+	while (i >= 0)
+	{
+		if ((byte >> i) & 1)
+			bit = '1';
+		else
+			bit = '0';
+		write(1, &bit, 1);
+		i--;
+	}
 	write(1, "\n", 2);
 }
-

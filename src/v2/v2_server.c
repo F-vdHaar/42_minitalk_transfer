@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/12 20:05:01 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/22 17:36:27 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	get_str_len(int signum)
 static void	set_and_print_str(int signum)
 {
 	if (!g_s.data)
-		g_s.error_flag = 1;
+		return ;
 	if (signum == SIGUSR1)
 		g_s.data[g_s.char_index] |= (1 << (7 - (g_s.bit_index % 8)));
 	else if (signum == SIGUSR2)
@@ -101,7 +101,7 @@ int	main(int argc, char **argv)
 	sa.sa_sigaction = sig_handler;
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
-		print_exit("Error: sigaction failed\n", EXIT_FAILURE);
+		ft_printf("Error: recieved invalid signal\n");
 	process_message();
 	return (0);
 }

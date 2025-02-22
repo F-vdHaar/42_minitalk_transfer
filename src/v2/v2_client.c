@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:06:47 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/12 20:11:06 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/22 14:28:41 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@ int	main(int argc, char **argv)
 	if (argc != 3)
 	{
 		ft_printf("Usage: %s <PID>  <Message>\n", argv[0]);
-		print_exit("Error: User Input", EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);
 	}
-	if (ft_atoi(argv[1]) <= 0)
-		print_exit("Invalid PID", EXIT_FAILURE);
-	if (ft_strlen(argv[2]) == 0)
-		print_exit("Message cannot be empty", EXIT_FAILURE);
+	if (ft_atoi(argv[1]) <= 0 || ft_strlen(argv[2]) == 0)
+	{
+		ft_printf("Invalid PID or Message");
+		exit(EXIT_SUCCESS);
+	}
 	server_pid = ft_atoi(argv[1]);
 	message = argv[2];
 	sa.sa_flags = 0;
@@ -41,7 +42,7 @@ int	main(int argc, char **argv)
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
-		print_exit("sigaction", EXIT_FAILURE);
+		ft_printf(" Error: [client] sigaction");
 	send_message_length(server_pid, ft_strlen(message));
 	send_message(server_pid, (char *)message);
 	return (0);
@@ -55,7 +56,8 @@ static void	handle_ack(int sig)
 	}
 	if (sig == SIGUSR2)
 	{
-		print_exit("Server confirmed receiving the message.\n", 0);
+		ft_printf("Server confirmed receiving the message.\n");
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -76,7 +78,7 @@ static void	client_send_bit(pid_t pid, int bit)
 		signal = SIGUSR2;
 	else
 	{
-		print_exit("Invalid bit value:", 0);
+		ft_printf("Error: [client_send_bit] Invalid bit value:");
 		return ;
 	}
 	send_bit(pid, signal);

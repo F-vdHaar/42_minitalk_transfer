@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
+#    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2025/02/10 20:30:33 by fvon-de          ###   ########.fr        #
+#    Updated: 2025/02/25 18:00:09 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,12 +19,14 @@ RED         = \033[1;31m       # Bright red for errors
 CYAN        = \033[1;36m       # Bright cyan for debug info
 
 # Project settings
-INCL = -I./include -I./lib/libft/include -I./lib/ft_printf/include
+INCLUDE_DIR = include
+LIB42_DIR = lib/lib42
+LIB42_REPO = https://github.com/F-vdHaar/42_lib.git
+INCLUDE = -I$(INCLUDE_DIR) -I$(LIB42_DIR)/libft/include -I$(LIB42_DIR)/ft_printf/include -I$(LIB42_DIR)/gnl/include 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Wunused $(INCL)
+CFLAGS = -Wall -Wextra -Werror -Wunused $(INCLUDE)
 DEBUG_FLAGS = $(CFLAGS) -g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
-LDFLAGS =  -L./lib/ft_printf -lftprintf -L./lib/libft -lft
-
+LDFLAGS = -L$(LIB42_DIR) -l42 
 # Default version if not specified
 VERSION ?= v2
 SRC_DIR = src/$(VERSION)
@@ -38,14 +40,9 @@ SRCS_CLIENT = $(SRC_DIR)/$(VERSION)_client.c $(SRC_DIR)/$(VERSION)_utils.c
 OBJS_SERVER = $(OBJ_DIR)/$(VERSION)_server.o $(OBJ_DIR)/$(VERSION)_utils.o
 OBJS_CLIENT = $(OBJ_DIR)/$(VERSION)_client.o $(OBJ_DIR)/$(VERSION)_utils.o
 
-# Library paths and targets
-LIBFT_DIR = ./lib/libft
-FT_PRINTF_DIR = ./lib/ft_printf
-LIBFT = $(LIBFT_DIR)/libft.a
-FT_PRINTF = $(FT_PRINTF_DIR)/libftprintf.a
 
 # Default rule to build server and client
-all: $(LIBFT) $(FT_PRINTF) $(NAME_SERVER) $(NAME_CLIENT)
+all: $(LIB42_DIR)/lib42.a $(NAME_SERVER) $(NAME_CLIENT)
 	@echo "$(GREEN)MINITALK : Version $(VERSION) selected.$(RESET_COLOR)"
 	@echo "Source files for server: $(SRCS_SERVER)"
 	@echo "Source files for client: $(SRCS_CLIENT)"
@@ -54,21 +51,24 @@ all: $(LIBFT) $(FT_PRINTF) $(NAME_SERVER) $(NAME_CLIENT)
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
-# Library build rules
-$(LIBFT): 
-	@$(MAKE) -C $(LIBFT_DIR)
-
-$(FT_PRINTF): 
-	@$(MAKE) -C $(FT_PRINTF_DIR)
-
+# Build external libraries if needed, or clone from repo
+$(LIB42_DIR)/lib42.a:
+	@if [ ! -d "$(LIB42_DIR)" ]; then \
+		echo "$(YELLOW)Cloning lib42 from $(LIB42_REPO)...$(RESET_COLOR)"; \
+		mkdir -p lib; \
+		git clone $(LIB42_REPO) $(LIB42_DIR); \
+	else \
+		echo "$(YELLOW)Checking for lib42 library...$(RESET_COLOR)"; \
+	fi
+	@$(MAKE) -C $(LIB42_DIR)
 
 # Build rules for server and client
-$(NAME_SERVER): $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
+$(NAME_SERVER): $(OBJS_SERVER)  $(LIB42_DIR)/lib42.a
 	@echo "$(YELLOW)MINITALK : Compiling $(NAME_SERVER)...$(RESET_COLOR)"
 	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER) $(LDFLAGS)
 	@echo "$(GREEN)MINITALK : $(NAME_SERVER) compilation successful!$(RESET_COLOR)"
 
-$(NAME_CLIENT): $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
+$(NAME_CLIENT): $(OBJS_CLIENT)  $(LIB42_DIR)/lib42.a
 	@echo "$(YELLOW)MINITALK : Compiling $(NAME_CLIENT)...$(RESET_COLOR)"
 	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT) $(LDFLAGS)
 	@echo "$(GREEN)MINITALK : $(NAME_CLIENT) compilation successful!$(RESET_COLOR)"
@@ -82,14 +82,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 clean:
 	@echo "$(BLUE)MINITALK : Cleaning object files in $(OBJ_DIR)...$(RESET_COLOR)"
 	@rm -rf $(OBJ_DIR)
-	@$(MAKE) -C $(LIBFT_DIR) clean
-	@$(MAKE) -C $(FT_PRINTF_DIR) clean
 
 fclean: clean
 	@echo "$(BLUE)MINITALK : Removing executables...$(RESET_COLOR)"
 	@rm -f $(NAME_SERVER) $(NAME_CLIENT)
-	@$(MAKE) -C $(LIBFT_DIR) fclean
-	@$(MAKE) -C $(FT_PRINTF_DIR) fclean
+	@$(MAKE) -C $(LIB42_DIR) clean
 
 re: fclean all
 

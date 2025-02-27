@@ -6,7 +6,7 @@
 /*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/27 01:32:48 by fvon-der         ###   ########.fr       */
+/*   Updated: 2025/02/27 01:40:20 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ static void	process_message(void)
 	{
 		if (g_s.error_flag)
 			handle_errors(g_s.error_flag);
-		if (g_s.clean_flag)
+		if (g_s.clean_flag || g_s.error_flag)
 		{
 			if (g_s.data)
 				free(g_s.data);

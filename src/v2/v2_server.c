@@ -6,7 +6,7 @@
 /*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/27 01:00:09 by fvon-der         ###   ########.fr       */
+/*   Updated: 2025/02/27 01:32:48 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,6 @@ static void	process_message(void)
 {
 	while (1)
 	{
-		if (g_s.length && g_s.len_flag && !g_s.data)
-		{
-			g_s.data = (char *)ft_calloc(g_s.length + 1, sizeof(char));
-			if (!g_s.data)
-				g_s.error_flag = 1;
-		}
 		if (g_s.error_flag)
 			handle_errors(g_s.error_flag);
 		if (g_s.clean_flag)
@@ -138,4 +132,5 @@ static void	process_message(void)
 			g_s.pid_client = 0;
 		}
 	}
+	pause();
 }

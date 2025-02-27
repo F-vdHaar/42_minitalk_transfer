@@ -6,7 +6,7 @@
 #    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2025/02/25 18:00:09 by fvon-der         ###   ########.fr        #
+#    Updated: 2025/02/27 01:04:23 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ LIB42_REPO = https://github.com/F-vdHaar/42_lib.git
 INCLUDE = -I$(INCLUDE_DIR) -I$(LIB42_DIR)/libft/include -I$(LIB42_DIR)/ft_printf/include -I$(LIB42_DIR)/gnl/include 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Wunused $(INCLUDE)
-DEBUG_FLAGS = $(CFLAGS) -g -O0 -fsanitize=address -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
+DEBUG_FLAGS = $(CFLAGS) -g -O0  -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
 LDFLAGS = -L$(LIB42_DIR) -l42 
 # Default version if not specified
 VERSION ?= v2
@@ -90,6 +90,7 @@ fclean: clean
 
 re: fclean all
 
+bonus: all
 # Norminette target
 norm:
 	@echo "$(BLUE)MINITALK : Running Norminette...$(RESET_COLOR)"
@@ -113,4 +114,4 @@ v2:
 v3: 
 	@$(MAKE) VERSION=v3
 
-.PHONY: all clean fclean re norm debug v1 v2 v3
+.PHONY: all clean fclean re norm debug v1 v2 v3 bonus

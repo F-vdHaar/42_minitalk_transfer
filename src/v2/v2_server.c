@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v2_server.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
+/*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/22 17:36:27 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/27 01:00:09 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ static void	get_str_len(int signum)
 			g_s.error_flag = 2;
 		g_s.len_flag = 1;
 		g_s.bit_index = 0;
+		g_s.data = ft_calloc(g_s.length + 1, sizeof(char));
+		if (!g_s.data)
+		{
+			g_s.error_flag = 1;
+			return ;
+		}
 	}
 	send_bit(g_s.pid_client, SIGUSR1);
 }
@@ -110,7 +116,6 @@ static void	process_message(void)
 {
 	while (1)
 	{
-		pause();
 		if (g_s.length && g_s.len_flag && !g_s.data)
 		{
 			g_s.data = (char *)ft_calloc(g_s.length + 1, sizeof(char));

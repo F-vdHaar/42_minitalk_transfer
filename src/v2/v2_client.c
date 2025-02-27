@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v2_client.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
+/*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:06:47 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/22 14:28:41 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/27 00:50:19 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,8 @@ int	main(int argc, char **argv)
 	int					server_pid;
 	const char			*message;
 
-	if (argc != 3)
-	{
-		ft_printf("Usage: %s <PID>  <Message>\n", argv[0]);
-		exit(EXIT_SUCCESS);
-	}
-	if (ft_atoi(argv[1]) <= 0 || ft_strlen(argv[2]) == 0)
-	{
-		ft_printf("Invalid PID or Message");
-		exit(EXIT_SUCCESS);
-	}
+	if (argc != 3 || ft_atoi(argv[1]) <= 0 || ft_strlen(argv[2]) == 0)
+		return (ft_printf("Usage: %s <PID> <Message>\n", argv[0]), 1);
 	server_pid = ft_atoi(argv[1]);
 	message = argv[2];
 	sa.sa_flags = 0;
@@ -42,9 +34,10 @@ int	main(int argc, char **argv)
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
-		ft_printf(" Error: [client] sigaction");
+		return (ft_printf(" Error: [client] sigaction"), 1);
 	send_message_length(server_pid, ft_strlen(message));
 	send_message(server_pid, (char *)message);
+	reset_signal_handlers();
 	return (0);
 }
 

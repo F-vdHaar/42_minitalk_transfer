@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v2_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
+/*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:11:24 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/22 14:20:51 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/27 01:00:24 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,15 @@ void	print_binary(unsigned char byte)
 		i--;
 	}
 	write(1, "\n", 2);
+}
+
+void	reset_signal_handlers(void)
+{
+	struct sigaction	default_sa;
+
+	default_sa.sa_handler = SIG_DFL;
+	default_sa.sa_flags = 0;
+	sigemptyset(&default_sa.sa_mask);
+	sigaction(SIGUSR1, &default_sa, NULL);
+	sigaction(SIGUSR2, &default_sa, NULL);
 }

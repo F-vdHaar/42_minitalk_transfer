@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v2_minitalk.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
+/*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:05:29 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/22 17:38:17 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/02/27 00:47:25 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@ typedef struct s_message
 void	send_bit(pid_t pid, int signal);
 void	handle_errors(int flag);
 void	print_binary(unsigned char byte);
+void	reset_signal_handlers(void);
 
 #endif

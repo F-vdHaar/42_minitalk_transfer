@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v2_server.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/27 01:40:20 by fvon-der         ###   ########.fr       */
+/*   Updated: 2025/03/04 18:12:37 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,6 @@ static void	process_message(void)
 			g_s.clean_flag = 0;
 			g_s.pid_client = 0;
 		}
+		pause();
 	}
-	pause();
 }

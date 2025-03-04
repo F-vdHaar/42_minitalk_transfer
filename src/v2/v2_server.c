@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/04 18:12:37 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/04 18:17:55 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static void	get_str_len(int signum)
 		if (!g_s.data)
 		{
 			g_s.error_flag = 1;
+			write(1, &"ERROR: Could not Allocate String", 26);
 			return ;
 		}
 	}

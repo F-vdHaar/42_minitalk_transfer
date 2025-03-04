@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/10 14:51:18 by fvon-der          #+#    #+#             */
-/*   Updated: 2025/03/04 17:36:54 by fvon-de          ###   ########.fr       */
+/*   Created: 2025/03/04 17:45:22 by fvon-de           #+#    #+#             */
+/*   Updated: 2025/03/04 17:45:24 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // Signal handler for SIGUSR1 and SIGUSR2 signals
 	// Shift current_char left to make room for the next bit
-    // Set least significant bit to 1 if SIGUSR2
+	// Set least significant bit to 1 if SIGUSR2
 	// If 8 bits (1 character) have been received, print the character
 // (void)  -> this is for some backwards compatibility stuff
 void	handle_signal(int sig, siginfo_t *info, void *context)
@@ -25,7 +25,7 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 	(void)context;
 	current_char <<= 1;
 	if (sig == SIGUSR2)
-		current_char |= 1;  
+		current_char |= 1;
 	bit_count++;
 	if (bit_count == 8)
 	{

@@ -6,11 +6,11 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 00:46:42 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/04 17:38:31 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/04 17:50:05 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "v1_minitalk.h"
+#include "v1_minitalk.h"
 
 static void	send_string(pid_t server_pid, const char *str);
 static void	send_char(pid_t server_pid, char c);
@@ -20,20 +20,21 @@ volatile sig_atomic_t	g_ack_received = 0;
 
 static void	send_char(pid_t server_pid, char c)
 {
+	int	i;
+
 	g_ack_received = 0;
-	int i = 0;
+	i = 0;
 	while (i < 8)
 	{
 		g_ack_received = 0;
-		if (c & (1 << (7 - i))) 
-			send_bit(server_pid, SIGUSR2); 
+		if (c & (1 << (7 - i)))
+			send_bit(server_pid, SIGUSR2);
 		else
-			send_bit(server_pid, SIGUSR1); 
-		
+			send_bit(server_pid, SIGUSR1);
 		while (!g_ack_received)
-			{
-				pause();
-			}
+		{
+			pause();
+		}
 		i++;
 	}
 }
@@ -50,14 +51,14 @@ static void	send_string(pid_t server_pid, const char *str)
 
 int	main(int argc, char *argv[])
 {
-	pid_t	server_pid;
-	const char	*message;
+	pid_t				server_pid;
+	const char			*message;
 	struct sigaction	sa;
 
 	if (argc != 3)
 	{
-			write(1, &"Usage: ./client <PID> <string>", 31);
-			return (EXIT_FAILURE);		
+		write(1, &"Usage: ./client <PID> <string>", 31);
+		return (EXIT_FAILURE);
 	}
 	sa.sa_flags = 0;
 	sa.sa_handler = handle_ack;

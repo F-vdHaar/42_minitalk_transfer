@@ -6,12 +6,12 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:05:29 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/04 18:08:33 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/04 18:59:06 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef V2_MINITALK_H
-# define V2_MINITALK_H
+#ifndef V3_MINITALK_H
+# define V3_MINITALK_H
 
 # include <signal.h>
 # include <stddef.h>

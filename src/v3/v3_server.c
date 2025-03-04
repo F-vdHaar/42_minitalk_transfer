@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:10:38 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/04 18:58:41 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/04 19:32:10 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	sig_handler(int signum, siginfo_t *info, void *context)
 static void	get_str_len(int pid_client, int signum)
 {
 	static size_t	message_length = 0;
-	static int		bit_index = 0;
+	static size_t		bit_index = 0;
 
 	if (signum == SIGUSR1)
 	{

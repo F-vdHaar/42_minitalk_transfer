@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   v2_client.c                                        :+:      :+:    :+:   */
+/*   v3_client.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 01:06:47 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/02/27 00:50:19 by fvon-der         ###   ########.fr       */
+/*   Updated: 2025/03/09 14:06:42 by fvon-der         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "v2_minitalk.h"
 
-static void	send_message_length(pid_t pid, size_t len);
+static void	send_message_length(pid_t pid, int len);
 static void	send_message(pid_t pid, char *str);
 static void	client_send_bit(pid_t pid, int bit);
 static void	handle_ack(int sig);
@@ -85,16 +85,16 @@ static void	client_send_bit(pid_t pid, int bit)
 // Iterate through each bit of the message length 
 // Check if the current bit of the length is set to 1
 // starting from the least significant bit.
-static void	send_message_length(pid_t pid, size_t len)
+static void	send_message_length(pid_t pid, int len)
 {
-	size_t	bit;
+	int		bit;
 	int		signal;
 
 	bit = 0;
-	while (bit < (sizeof(size_t) * 8))
+	while (bit < (int)((sizeof(int) * 8)))
 	{
 		signal = 0;
-		if ((len & ((size_t)1 << bit)) != 0)
+		if ((len & ((int)1 << bit)) != 0)
 			signal = 1;
 		client_send_bit(pid, signal);
 		bit++;

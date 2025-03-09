@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
+#    By: fvon-der <fvon-der@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2025/03/04 17:53:41 by fvon-de          ###   ########.fr        #
+#    Updated: 2025/03/09 14:09:22 by fvon-der         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ CFLAGS = -Wall -Wextra -Werror -Wunused $(INCLUDE)
 DEBUG_FLAGS = $(CFLAGS) -g -O0  -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
 LDFLAGS = -L$(LIB42_DIR) -l42 
 # Default version if not specified
-VERSION ?= v1
+VERSION ?= v3
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
 NAME_SERVER = server

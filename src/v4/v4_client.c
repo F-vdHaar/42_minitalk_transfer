@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 00:46:42 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/10 20:02:27 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:34:09 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,10 @@ int	main(int argc, char *argv[])
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
-		return (ft_printf(" Error: [client] sigaction"), 1);
+	{
+		write(2, " Error: [client] sigaction", 27);
+		return (EXIT_FAILURE);
+	}
 	server_pid = ft_atoi(argv[1]);
 	message = argv[2];
 	send_string(server_pid, message);
@@ -80,7 +83,7 @@ static void	handle_ack(int sig)
 	}
 	if (sig == SIGUSR2)
 	{
-		ft_printf("Server confirmed receiving the message.\n");
+		write(1, "Server confirmed receiving the message.\n", 41);
 		exit(EXIT_SUCCESS);
 	}
 }

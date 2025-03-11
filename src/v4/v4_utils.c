@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:45:42 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/10 20:02:20 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:11:44 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,17 @@ void	send_bit(pid_t pid, int signal)
 {
 	if (signal != SIGUSR1 && signal != SIGUSR2)
 	{
-		ft_printf("Invalid signal: %d\n", signal);
+		write(2, "Invalid signal: ", 16);
+		write(2, &signal, sizeof(signal));
+		write(2, "\n", 1);
 		return ;
 	}
 	if (kill(pid, signal) == -1)
 	{
 		perror("kill");
-		ft_printf("Could not send signal", 1);
+		write(2, "Could not send signal\n", 22);
+		exit (EXIT_FAILURE);
 	}
-}
-
-void	handle_errors(int error_flag)
-{
-	if (error_flag == 1)
-		ft_printf("Error: Memory allocation failed\n");
-	if (error_flag == 2)
-		ft_printf("Error: Received invalid message length\n");
 }
 
 // Function to print a byte in binary using a while loop

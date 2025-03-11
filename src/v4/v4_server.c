@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 11:30:40 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/11 12:30:33 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/11 13:25:42 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,57 +37,45 @@ static void handle_utf8_character(unsigned char c)
     int i;
     int byte_count;
 
-    ft_printf("[DEBUG] Handling UTF-8 char: 0x%x\n", c);
-
-    // If the buffer is uninitialized (starts with 0xFF), initialize with the first byte
     if (g_utf8_char[0] == (char)0xFF)
     {
         g_utf8_char[0] = c;
         byte_count = get_utf8_byte_count(c);
-        ft_printf("[DEBUG] Detected start of UTF-8 char, byte count: %d\n", byte_count);
         if (byte_count == 0)
         {
             ft_printf("[ERROR] Invalid UTF-8 start byte: 0x%x\n", c);
-            ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);  // Reset the buffer on error
+            ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
             return;
         }
-        i = 1;  // The next byte will be placed at index 1
+        i = 1;
     }
     else
     {
-        // If we've already started receiving bytes, continue appending them
         i = 1;
         while (i < UTF8_MAX_LEN && g_utf8_char[i] != (char)0xFF)
             i++;
-
-        // Check if this is a valid continuation byte (0x80 to 0xBF)
         if (i > 0 && (c & 0xC0) != 0x80)
         {
             ft_printf("[ERROR] Invalid continuation byte: 0x%x\n", c);
-            ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);  // Reset on error
+            ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
             return;
         }
-
-        g_utf8_char[i] = c;  // Add the byte to the buffer
+        g_utf8_char[i] = c;
     }
-
-    // Print the buffer state (it should now only contain the valid UTF-8 byte(s))
-    ft_printf("[DEBUG] UTF-8 char buffer: %s\n", g_utf8_char);
-    ft_printf("[DEBUG] byte size  : %i\n", get_utf8_byte_count(g_utf8_char[0]));
-    ft_printf("[DEBUG] i  : %i\n", i);
-
-    // Check if the character is complete (i.e., we've received all expected bytes)
-    if (i == get_utf8_byte_count(g_utf8_char[0]))
+	if (get_utf8_byte_count(g_utf8_char[0]) == 1)
     {
-        ft_memset(g_utf8_char + i, 0, UTF8_MAX_LEN - i - 1);
-        ft_printf("[OUTPUT] UTF-8 Character Received: %s\n", g_utf8_char);
-
-        // Clear the buffer after processing the character
+        ft_printf("%c", c);
+        fflush(stdout);
         ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
     }
-    else
+    else if (i == get_utf8_byte_count(g_utf8_char[0] - 1))
     {
-        ft_printf("[DEBUG] Incomplete UTF-8 character, awaiting more bytes.\n");
+        ft_memset(g_utf8_char + i + 1, 0, UTF8_MAX_LEN - i - 1); 
+        //ft_printf("[DEBUG] UTF-8 char buffer: %s\n", g_utf8_char);
+        ft_printf("%s", g_utf8_char); 
+        fflush(stdout); 
+        ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN); 
+
     }
 }
 
@@ -102,13 +90,14 @@ static void set_and_print_str(int sig, siginfo_t *info)
     if (sig == SIGUSR2)
 		c |= (1 << (7 - bit));
     bit++;
-    ft_printf("[DEBUG] Updated char: 0x%x\n", c);
+    //ft_printf("[DEBUG] Updated char: 0x%x\n", c);
     if (bit == 8)
     {
-        ft_printf("[DEBUG] Full byte received: 0x%x (%c)\n", c, c);
+        //ft_printf("[DEBUG] Full byte received: 0x%x (%c)\n", c, c);
         if (c == '\0')
         {
-            ft_printf("[DEBUG] Null terminator detected, sending SIGUSR2 to %d\n", info->si_pid);
+			write(1, &"\n", 2);
+            //ft_printf("[DEBUG] Null terminator detected, sending SIGUSR2 to %d\n", info->si_pid);
             send_bit(info->si_pid, SIGUSR2);
         }
         else

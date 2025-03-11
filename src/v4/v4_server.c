@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 11:30:40 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/11 14:33:28 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/11 15:23:47 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,47 +34,55 @@ static int	get_utf8_byte_count(unsigned char c)
 
 static int	validate_utf8_byte(unsigned char c, int *i)
 {
+	int	byte_count;
+	int	expected_length;
+
 	if (g_utf8_char[0] == (char)0xFF)
 	{
+		byte_count = get_utf8_byte_count(c);
+		if (byte_count == 0)
+			return (-1);
 		g_utf8_char[0] = c;
 		*i = 1;
-		return (get_utf8_byte_count(c));
+		return (byte_count);
 	}
-	else
+	expected_length = get_utf8_byte_count(g_utf8_char[0]);
+	if (*i < expected_length && (c & 0xC0) == 0x80)
 	{
-		*i = 1;
-		while (*i < UTF8_MAX_LEN && g_utf8_char[*i] != (char)0xFF)
-			(*i)++;
-		if (*i > 0 && (c & 0xC0) != 0x80)
-		{
-			ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
-			return (-1);
-		}
 		g_utf8_char[*i] = c;
+		(*i)++;
+		if (*i == expected_length)
+			return (g_utf8_char[*i] = '\0', expected_length);
+		return (0);
 	}
-	return (0);
+	memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
+	return (-1);
 }
 
 static void	handle_utf8_character(unsigned char c)
 {
-	int	i;
-	int	byte_count;
+	static int	i = 0;
+	int			byte_count;
 
 	byte_count = validate_utf8_byte(c, &i);
 	if (byte_count == -1)
+	{
+		i = 0;
 		return ;
+	}
 	if (get_utf8_byte_count(g_utf8_char[0]) == 1)
 	{
 		write(1, &c, 1);
 		fflush(stdout);
-		ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
+		memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
+		i = 0;
 	}
-	else if (i == get_utf8_byte_count(g_utf8_char[0]) - 1)
+	else if (i == get_utf8_byte_count(g_utf8_char[0]))
 	{
-		ft_memset(g_utf8_char + i + 1, 0, UTF8_MAX_LEN - i - 1);
-		write(1, g_utf8_char, i + 1);
+		write(1, g_utf8_char, i);
 		fflush(stdout);
-		ft_memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
+		memset(g_utf8_char, 0xFF, UTF8_MAX_LEN);
+		i = 0;
 	}
 }
 

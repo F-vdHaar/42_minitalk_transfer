@@ -6,7 +6,7 @@
 /*   By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 00:46:42 by fvon-de           #+#    #+#             */
-/*   Updated: 2025/03/11 14:34:09 by fvon-de          ###   ########.fr       */
+/*   Updated: 2025/03/11 14:35:45 by fvon-de          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	main(int argc, char *argv[])
 	if (sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
 	{
-		write(2, " Error: [client] sigaction", 27);
+		write(2, "Error: [client] sigaction", 26);
 		return (EXIT_FAILURE);
 	}
 	server_pid = ft_atoi(argv[1]);

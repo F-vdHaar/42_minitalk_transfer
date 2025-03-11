@@ -6,7 +6,7 @@
 #    By: fvon-de <fvon-der@student.42heilbronn.d    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/28 04:26:53 by fvon-der          #+#    #+#              #
-#    Updated: 2025/03/04 17:53:41 by fvon-de          ###   ########.fr        #
+#    Updated: 2025/03/10 18:50:58 by fvon-de          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ CFLAGS = -Wall -Wextra -Werror -Wunused $(INCLUDE)
 DEBUG_FLAGS = $(CFLAGS) -g -O0  -fsanitize=undefined -fno-strict-aliasing -fno-omit-frame-pointer -fstack-protector -DDEBUG -fno-inline
 LDFLAGS = -L$(LIB42_DIR) -l42 
 # Default version if not specified
-VERSION ?= v1
+VERSION ?= v4
 SRC_DIR = src/$(VERSION)
 OBJ_DIR = obj/$(VERSION)
 NAME_SERVER = server
@@ -114,4 +114,7 @@ v2:
 v3: 
 	@$(MAKE) VERSION=v3
 
-.PHONY: all clean fclean re norm debug v1 v2 v3 bonus
+v4: 
+	@$(MAKE) VERSION=v3
+
+.PHONY: all clean fclean re norm debug v1 v2 v3 v3 bonus
